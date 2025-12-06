@@ -1,6 +1,6 @@
-# DIGIDINE - Frontend Food Delivery & Waste Reduction App
+# DIGIDINE - Food Delivery & Waste Reduction App
 
-A complete frontend-only web application similar to Swiggy, with an additional feature for reducing food waste by connecting restaurants with volunteers to distribute leftover food.
+A web application similar to Swiggy, with an additional feature for reducing food waste by connecting restaurants with volunteers to distribute leftover food.
 
 ## Features
 
