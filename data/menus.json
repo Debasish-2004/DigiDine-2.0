@@ -1,0 +1,204 @@
+{
+  "1": [
+    {
+      "id": 101,
+      "name": "Butter Chicken",
+      "description": "Creamy tomato-based curry with tender chicken pieces",
+      "price": 320,
+      "image": "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=300",
+      "category": "Main Course",
+      "veg": false
+    },
+    {
+      "id": 102,
+      "name": "Paneer Tikka",
+      "description": "Grilled cottage cheese with spices and mint chutney",
+      "price": 280,
+      "image": "https://images.unsplash.com/photo-1606491956689-2ea866880c84?w=300",
+      "category": "Appetizer",
+      "veg": true
+    },
+    {
+      "id": 103,
+      "name": "Dal Makhani",
+      "description": "Creamy black lentils cooked overnight",
+      "price": 250,
+      "image": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=300",
+      "category": "Main Course",
+      "veg": true
+    },
+    {
+      "id": 104,
+      "name": "Garlic Naan",
+      "description": "Fresh baked bread with garlic and butter",
+      "price": 60,
+      "image": "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=300",
+      "category": "Bread",
+      "veg": true
+    },
+    {
+      "id": 105,
+      "name": "Biryani",
+      "description": "Fragrant basmati rice with spiced chicken",
+      "price": 350,
+      "image": "https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=300",
+      "category": "Main Course",
+      "veg": false
+    }
+  ],
+  "2": [
+    {
+      "id": 201,
+      "name": "Margherita Pizza",
+      "description": "Classic pizza with tomato, mozzarella, and basil",
+      "price": 450,
+      "image": "https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=300",
+      "category": "Pizza",
+      "veg": true
+    },
+    {
+      "id": 202,
+      "name": "Pepperoni Pizza",
+      "description": "Spicy pepperoni with mozzarella cheese",
+      "price": 550,
+      "image": "https://images.unsplash.com/photo-1628840042765-356cda07504e?w=300",
+      "category": "Pizza",
+      "veg": false
+    },
+    {
+      "id": 203,
+      "name": "Garlic Bread",
+      "description": "Crispy bread with garlic butter",
+      "price": 180,
+      "image": "https://images.unsplash.com/photo-1572441713132-51c75654db73?w=300",
+      "category": "Sides",
+      "veg": true
+    },
+    {
+      "id": 204,
+      "name": "Caesar Salad",
+      "description": "Fresh romaine lettuce with caesar dressing",
+      "price": 320,
+      "image": "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=300",
+      "category": "Salad",
+      "veg": true
+    }
+  ],
+  "3": [
+    {
+      "id": 301,
+      "name": "Salmon Sushi Roll",
+      "description": "Fresh salmon with avocado and cucumber",
+      "price": 480,
+      "image": "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=300",
+      "category": "Sushi",
+      "veg": false
+    },
+    {
+      "id": 302,
+      "name": "California Roll",
+      "description": "Crab, avocado, and cucumber",
+      "price": 420,
+      "image": "https://images.unsplash.com/photo-1611143669185-af224c5e3252?w=300",
+      "category": "Sushi",
+      "veg": false
+    },
+    {
+      "id": 303,
+      "name": "Miso Soup",
+      "description": "Traditional Japanese soup with tofu",
+      "price": 180,
+      "image": "https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=300",
+      "category": "Soup",
+      "veg": true
+    }
+  ],
+  "4": [
+    {
+      "id": 401,
+      "name": "Classic Burger",
+      "description": "Beef patty with lettuce, tomato, and special sauce",
+      "price": 250,
+      "image": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=300",
+      "category": "Burger",
+      "veg": false
+    },
+    {
+      "id": 402,
+      "name": "Veggie Burger",
+      "description": "Plant-based patty with fresh vegetables",
+      "price": 220,
+      "image": "https://images.unsplash.com/photo-1525059696034-4967a7290027?w=300",
+      "category": "Burger",
+      "veg": true
+    },
+    {
+      "id": 403,
+      "name": "French Fries",
+      "description": "Crispy golden fries with seasoning",
+      "price": 120,
+      "image": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=300",
+      "category": "Sides",
+      "veg": true
+    }
+  ],
+  "5": [
+    {
+      "id": 501,
+      "name": "Pad Thai",
+      "description": "Stir-fried noodles with tamarind sauce",
+      "price": 380,
+      "image": "https://images.unsplash.com/photo-1559314809-0d155014e29e?w=300",
+      "category": "Main Course",
+      "veg": false
+    },
+    {
+      "id": 502,
+      "name": "Green Curry",
+      "description": "Spicy green curry with vegetables",
+      "price": 350,
+      "image": "https://images.unsplash.com/photo-1559314809-0d155014e29e?w=300",
+      "category": "Main Course",
+      "veg": true
+    },
+    {
+      "id": 503,
+      "name": "Tom Yum Soup",
+      "description": "Hot and sour soup with shrimp",
+      "price": 320,
+      "image": "https://images.unsplash.com/photo-1559314809-0d155014e29e?w=300",
+      "category": "Soup",
+      "veg": false
+    }
+  ],
+  "6": [
+    {
+      "id": 601,
+      "name": "Chicken Tacos",
+      "description": "Soft tortillas with grilled chicken and salsa",
+      "price": 280,
+      "image": "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=300",
+      "category": "Tacos",
+      "veg": false
+    },
+    {
+      "id": 602,
+      "name": "Veggie Quesadilla",
+      "description": "Cheese and vegetables in a crispy tortilla",
+      "price": 250,
+      "image": "https://images.unsplash.com/photo-1618040996337-56904b7850b9?w=300",
+      "category": "Main Course",
+      "veg": true
+    },
+    {
+      "id": 603,
+      "name": "Guacamole",
+      "description": "Fresh avocado dip with chips",
+      "price": 200,
+      "image": "https://images.unsplash.com/photo-1589168748823-c8838e86c53a?w=300",
+      "category": "Appetizer",
+      "veg": true
+    }
+  ]
+}
+

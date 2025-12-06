@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurants - DIGIDINE</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">🍽️ DIGIDINE</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="restaurants.html">Restaurants</a></li>
+                <li><a href="leftover-food.html">Leftover Food</a></li>
+                <li>
+                    <a href="cart.html" class="cart-icon">
+                        🛒 Cart
+                        <span class="cart-badge" style="display: none;">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 style="margin-bottom: 2rem;">All Restaurants</h1>
+        
+        <div class="filters">
+            <input type="text" id="search-box" class="search-box" placeholder="Search restaurants...">
+            <button class="filter-btn active" data-cuisine="all">All</button>
+            <button class="filter-btn" data-cuisine="North Indian">North Indian</button>
+            <button class="filter-btn" data-cuisine="Italian">Italian</button>
+            <button class="filter-btn" data-cuisine="Japanese">Japanese</button>
+            <button class="filter-btn" data-cuisine="American">American</button>
+            <button class="filter-btn" data-cuisine="Thai">Thai</button>
+            <button class="filter-btn" data-cuisine="Mexican">Mexican</button>
+        </div>
+
+        <div id="restaurants-container" class="cards-grid"></div>
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">🔍</div>
+            <h3>No restaurants found</h3>
+            <p>Try adjusting your search or filters</p>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script>
+        let allRestaurants = [];
+        let filteredRestaurants = [];
+
+        async function loadRestaurants() {
+            try {
+                allRestaurants = await API.get('data/restaurants.json');
+                filteredRestaurants = [...allRestaurants];
+                renderRestaurants();
+            } catch (error) {
+                console.error('Error loading restaurants:', error);
+            }
+        }
+
+        function renderRestaurants() {
+            const container = document.getElementById('restaurants-container');
+            const emptyState = document.getElementById('empty-state');
+
+            if (filteredRestaurants.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'grid';
+            emptyState.style.display = 'none';
+
+            container.innerHTML = filteredRestaurants.map(restaurant => `
+                <div class="card" onclick="window.location.href='restaurant-detail.html?id=${restaurant.id}'">
+                    <img src="${restaurant.image}" alt="${restaurant.name}" class="card-image">
+                    <div class="card-content">
+                        <h3 class="card-title">${restaurant.name}</h3>
+                        <p class="card-subtitle">${restaurant.cuisine} • ${restaurant.description}</p>
+                        <div class="card-info">
+                            <span class="rating">⭐ ${restaurant.rating}</span>
+                            <span>${restaurant.deliveryTime}</span>
+                        </div>
+                        <div class="card-footer">
+                            <span>Min. ₹${restaurant.minOrder}</span>
+                            <span class="price">Delivery: ₹${restaurant.deliveryFee}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter by cuisine
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const cuisine = this.dataset.cuisine;
+                if (cuisine === 'all') {
+                    filteredRestaurants = [...allRestaurants];
+                } else {
+                    filteredRestaurants = allRestaurants.filter(r => r.cuisine === cuisine);
+                }
+
+                applySearchFilter();
+            });
+        });
+
+        // Search functionality
+        function applySearchFilter() {
+            const searchTerm = document.getElementById('search-box').value.toLowerCase();
+            if (searchTerm) {
+                filteredRestaurants = filteredRestaurants.filter(restaurant =>
+                    restaurant.name.toLowerCase().includes(searchTerm) ||
+                    restaurant.cuisine.toLowerCase().includes(searchTerm) ||
+                    restaurant.description.toLowerCase().includes(searchTerm)
+                );
+            }
+            renderRestaurants();
+        }
+
+        document.getElementById('search-box').addEventListener('input', function() {
+            const activeFilter = document.querySelector('.filter-btn.active');
+            const cuisine = activeFilter ? activeFilter.dataset.cuisine : 'all';
+            
+            if (cuisine === 'all') {
+                filteredRestaurants = [...allRestaurants];
+            } else {
+                filteredRestaurants = allRestaurants.filter(r => r.cuisine === cuisine);
+            }
+            
+            applySearchFilter();
+        });
+
+        loadRestaurants();
+    </script>
+</body>
+</html>
+

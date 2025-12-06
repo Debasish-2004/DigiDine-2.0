@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Dashboard - Food Bridge</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">🍽️ DIGIDINE</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="restaurants.html">Restaurants</a></li>
+                <li><a href="leftover-food.html">Leftover Food</a></li>
+                <li><a href="restaurant-dashboard.html">Restaurant Dashboard</a></li>
+                <li>
+                    <a href="cart.html" class="cart-icon">
+                        🛒 Cart
+                        <span class="cart-badge" style="display: none;">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Authentication Section -->
+    <div id="auth-section" class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Restaurant Dashboard</h1>
+                <p>Sign in to manage your restaurant listings</p>
+            </div>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="switchAuthTab('login')">Login</button>
+                <button class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="login-form" class="auth-form active">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="login-email" placeholder="restaurant@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="login-password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Login</button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signup-form" class="auth-form">
+                <div class="form-group">
+                    <label>Restaurant Name</label>
+                    <input type="text" id="signup-restaurant-name" placeholder="Your Restaurant Name" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="signup-email" placeholder="restaurant@example.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="signup-password" placeholder="Create a password" minlength="6" required>
+                </div>
+                <div class="form-group">
+                    <label>Confirm Password</label>
+                    <input type="password" id="signup-confirm-password" placeholder="Confirm your password" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="signup-phone" placeholder="+91 9876543210" required>
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <textarea id="signup-address" placeholder="Restaurant address" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Dashboard Section (hidden until authenticated) -->
+    <div id="dashboard-section" class="container" style="display: none;">
+        <div class="dashboard-header">
+            <h1>Restaurant Dashboard</h1>
+            <button class="btn btn-primary" onclick="openAddListingModal()">+ Add Leftover Food Listing</button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="total-listings">0</div>
+                <div class="stat-label">Total Listings</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="available-listings">0</div>
+                <div class="stat-label">Available</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="requested-listings">0</div>
+                <div class="stat-label">Requested</div>
+            </div>
+        </div>
+
+        <h2 style="margin: 2rem 0 1rem;">My Listings</h2>
+        <div id="listings-container" class="cards-grid"></div>
+        <div id="empty-listings" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">📋</div>
+            <h3>No listings yet</h3>
+            <p>Create your first leftover food listing to help reduce waste!</p>
+        </div>
+    </div>
+
+    <!-- Add Listing Modal -->
+    <div id="add-listing-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeAddListingModal()">&times;</button>
+            <h2 class="modal-title">Add Leftover Food Listing</h2>
+            <form id="listing-form">
+                <div class="form-group">
+                    <label>Restaurant Name</label>
+                    <select id="restaurant-select" required>
+                        <option value="">Select Restaurant</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Food Items (comma-separated)</label>
+                    <input type="text" id="food-items" placeholder="e.g., Butter Chicken, Dal Makhani" required>
+                </div>
+                <div class="form-group">
+                    <label>Quantity per Item</label>
+                    <input type="number" id="food-quantity" placeholder="e.g., 5" min="1" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="food-description" placeholder="Describe the leftover food..." required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Pickup Time</label>
+                    <input type="datetime-local" id="pickup-time" required>
+                </div>
+                <div class="form-group">
+                    <label>Location</label>
+                    <input type="text" id="location" placeholder="Restaurant address" required>
+                </div>
+                <div class="form-group">
+                    <label>Contact Phone</label>
+                    <input type="tel" id="contact" placeholder="+91 9876543210" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Listing</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script>
+        let allListings = [];
+        let restaurants = [];
+
+        async function loadDashboard() {
+            try {
+                [allListings, restaurants] = await Promise.all([
+                    API.get('data/leftover-food.json'),
+                    API.get('data/restaurants.json')
+                ]);
+
+                // Load from localStorage if available
+                const localListings = JSON.parse(localStorage.getItem('leftover-food') || '[]');
+                allListings = [...allListings, ...localListings];
+
+                updateStats();
+                renderListings();
+                populateRestaurantSelect();
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        function populateRestaurantSelect() {
+            const select = document.getElementById('restaurant-select');
+            const currentUser = Auth.getCurrentUser();
+            
+            if (currentUser && currentUser.restaurantName) {
+                // If user is logged in, use their restaurant name
+                select.innerHTML = `<option value="${currentUser.restaurantId || ''}">${currentUser.restaurantName}</option>`;
+                select.disabled = true; // Disable since it's their own restaurant
+            } else {
+                // Fallback to showing all restaurants
+                select.innerHTML = '<option value="">Select Restaurant</option>' +
+                    restaurants.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+            }
+        }
+
+        function updateStats() {
+            const total = allListings.length;
+            const available = allListings.filter(l => l.status === 'available').length;
+            const requested = allListings.filter(l => l.status === 'requested').length;
+
+            document.getElementById('total-listings').textContent = total;
+            document.getElementById('available-listings').textContent = available;
+            document.getElementById('requested-listings').textContent = requested;
+        }
+
+        function renderListings() {
+            const container = document.getElementById('listings-container');
+            const emptyState = document.getElementById('empty-listings');
+
+            if (allListings.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'grid';
+            emptyState.style.display = 'none';
+
+            container.innerHTML = allListings.map(listing => `
+                <div class="card">
+                    <div class="card-content">
+                        <h3 class="card-title">${listing.restaurantName}</h3>
+                        <div style="margin: 1rem 0;">
+                            <strong>Food Items:</strong>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                                ${listing.foodItems.map(item => 
+                                    `<li>${item.name} (Qty: ${item.quantity})</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                        <div class="card-info">
+                            <span>📍 ${listing.location}</span>
+                        </div>
+                        <div class="card-info">
+                            <span>🕐 ${formatDate(listing.pickupTime)}</span>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <span class="status-badge status-${listing.status}">${listing.status}</span>
+                        </div>
+                        ${listing.status === 'requested' && listing.requestedBy ? 
+                            `<div style="margin-top: 0.5rem; color: var(--text-light); font-size: 0.9rem;">
+                                Requested by: ${listing.requestedBy}
+                            </div>` : ''
+                        }
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAddListingModal() {
+            document.getElementById('add-listing-modal').classList.add('active');
+            // Set default pickup time to today at 10 PM
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            tomorrow.setHours(22, 0, 0, 0);
+            document.getElementById('pickup-time').value = tomorrow.toISOString().slice(0, 16);
+        }
+
+        function closeAddListingModal() {
+            document.getElementById('add-listing-modal').classList.remove('active');
+            document.getElementById('listing-form').reset();
+        }
+
+        document.getElementById('listing-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const currentUser = Auth.getCurrentUser();
+            const restaurantId = currentUser ? currentUser.restaurantId : parseInt(document.getElementById('restaurant-select').value);
+            const restaurantName = currentUser ? currentUser.restaurantName : (restaurants.find(r => r.id === restaurantId)?.name || '');
+            
+            const foodItemsText = document.getElementById('food-items').value;
+            const quantity = parseInt(document.getElementById('food-quantity').value);
+            const description = document.getElementById('food-description').value;
+            const pickupTime = document.getElementById('pickup-time').value;
+            const location = document.getElementById('location').value;
+            const contact = document.getElementById('contact').value;
+
+            const foodItems = foodItemsText.split(',').map(item => ({
+                name: item.trim(),
+                quantity: quantity,
+                description: description
+            }));
+
+            const newListing = {
+                id: Date.now(),
+                restaurantId: restaurantId,
+                restaurantName: restaurantName,
+                foodItems: foodItems,
+                pickupTime: new Date(pickupTime).toISOString(),
+                location: location,
+                status: 'available',
+                createdAt: new Date().toISOString(),
+                contact: contact
+            };
+
+            // Save to localStorage
+            const localListings = JSON.parse(localStorage.getItem('leftover-food') || '[]');
+            localListings.push(newListing);
+            localStorage.setItem('leftover-food', JSON.stringify(localListings));
+
+            allListings.push(newListing);
+            updateStats();
+            renderListings();
+            closeAddListingModal();
+            Toast.success('Leftover food listing created successfully!');
+        });
+
+        // Close modal on outside click
+        document.getElementById('add-listing-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAddListingModal();
+            }
+        });
+
+        // Don't load dashboard automatically - it will be loaded by checkAuth() if authenticated
+    </script>
+
+    <script>
+        // Authentication Management
+        const Auth = {
+            isAuthenticated: function() {
+                return localStorage.getItem('restaurant-auth') !== null;
+            },
+            
+            getCurrentUser: function() {
+                const auth = localStorage.getItem('restaurant-auth');
+                return auth ? JSON.parse(auth) : null;
+            },
+            
+            login: function(email, password) {
+                const restaurants = JSON.parse(localStorage.getItem('restaurant-users') || '[]');
+                const restaurant = restaurants.find(r => r.email === email && r.password === password);
+                
+                if (restaurant) {
+                    const authData = {
+                        email: restaurant.email,
+                        restaurantName: restaurant.restaurantName,
+                        restaurantId: restaurant.id
+                    };
+                    localStorage.setItem('restaurant-auth', JSON.stringify(authData));
+                    return true;
+                }
+                return false;
+            },
+            
+            signup: function(data) {
+                const restaurants = JSON.parse(localStorage.getItem('restaurant-users') || '[]');
+                
+                // Check if email already exists
+                if (restaurants.find(r => r.email === data.email)) {
+                    return { success: false, message: 'Email already registered' };
+                }
+                
+                const newRestaurant = {
+                    id: Date.now(),
+                    restaurantName: data.restaurantName,
+                    email: data.email,
+                    password: data.password,
+                    phone: data.phone,
+                    address: data.address,
+                    createdAt: new Date().toISOString()
+                };
+                
+                restaurants.push(newRestaurant);
+                localStorage.setItem('restaurant-users', JSON.stringify(restaurants));
+                
+                // Auto-login after signup
+                const authData = {
+                    email: newRestaurant.email,
+                    restaurantName: newRestaurant.restaurantName,
+                    restaurantId: newRestaurant.id
+                };
+                localStorage.setItem('restaurant-auth', JSON.stringify(authData));
+                
+                return { success: true };
+            },
+            
+            logout: function() {
+                localStorage.removeItem('restaurant-auth');
+                window.location.reload();
+            }
+        };
+
+        // Check authentication on page load
+        function checkAuth() {
+            if (Auth.isAuthenticated()) {
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('dashboard-section').style.display = 'block';
+                // Load dashboard only when authenticated
+                if (typeof loadDashboard === 'function') {
+                    loadDashboard();
+                }
+                addLogoutButton();
+            } else {
+                document.getElementById('auth-section').style.display = 'flex';
+                document.getElementById('dashboard-section').style.display = 'none';
+            }
+        }
+
+        // Switch between login and signup tabs
+        function switchAuthTab(tab) {
+            const loginTab = document.querySelector('.auth-tab:first-child');
+            const signupTab = document.querySelector('.auth-tab:last-child');
+            const loginForm = document.getElementById('login-form');
+            const signupForm = document.getElementById('signup-form');
+            
+            if (tab === 'login') {
+                loginTab.classList.add('active');
+                signupTab.classList.remove('active');
+                loginForm.classList.add('active');
+                signupForm.classList.remove('active');
+            } else {
+                signupTab.classList.add('active');
+                loginTab.classList.remove('active');
+                signupForm.classList.add('active');
+                loginForm.classList.remove('active');
+            }
+        }
+
+        // Login form handler
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            if (Auth.login(email, password)) {
+                Toast.success('Login successful!');
+                setTimeout(() => {
+                    checkAuth();
+                }, 500);
+            } else {
+                Toast.error('Invalid email or password');
+            }
+        });
+
+        // Signup form handler
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                Toast.error('Passwords do not match');
+                return;
+            }
+            
+            if (password.length < 6) {
+                Toast.error('Password must be at least 6 characters');
+                return;
+            }
+            
+            const signupData = {
+                restaurantName: document.getElementById('signup-restaurant-name').value,
+                email: document.getElementById('signup-email').value,
+                password: password,
+                phone: document.getElementById('signup-phone').value,
+                address: document.getElementById('signup-address').value
+            };
+            
+            const result = Auth.signup(signupData);
+            if (result.success) {
+                Toast.success('Account created successfully!');
+                setTimeout(() => {
+                    checkAuth();
+                }, 500);
+            } else {
+                Toast.error(result.message || 'Failed to create account');
+            }
+        });
+
+        // Add logout button to dashboard header
+        function addLogoutButton() {
+            const dashboardHeader = document.querySelector('.dashboard-header');
+            if (dashboardHeader && !document.getElementById('logout-btn')) {
+                const logoutBtn = document.createElement('button');
+                logoutBtn.id = 'logout-btn';
+                logoutBtn.className = 'btn btn-outline';
+                logoutBtn.textContent = 'Logout';
+                logoutBtn.onclick = Auth.logout;
+                dashboardHeader.appendChild(logoutBtn);
+            }
+        }
+
+        // Initialize on page load
+        checkAuth();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leftover Food - DIGIDINE</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">🍽️ DIGIDINE</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="restaurants.html">Restaurants</a></li>
+                <li><a href="leftover-food.html">Leftover Food</a></li>
+               <li>
+                    <a href="cart.html" class="cart-icon">
+                        🛒 Cart
+                        <span class="cart-badge" style="display: none;">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1 style="margin-bottom: 1rem;">Available Leftover Food</h1>
+        <p style="color: var(--text-light); margin-bottom: 2rem;">
+            Help reduce food waste by picking up leftover food from restaurants and distributing it to those in need.
+        </p>
+
+        <div class="filters">
+            <button class="filter-btn active" data-status="all">All</button>
+            <button class="filter-btn" data-status="available">Available</button>
+            <button class="filter-btn" data-status="requested">Requested</button>
+        </div>
+
+        <div id="listings-container" class="cards-grid"></div>
+        <div id="empty-state" class="empty-state" style="display: none;">
+            <div class="empty-state-icon">🍽️</div>
+            <h3>No leftover food listings available</h3>
+            <p>Check back later for new listings</p>
+        </div>
+    </div>
+
+    <!-- Request Pickup Modal -->
+    <div id="request-modal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeRequestModal()">&times;</button>
+            <h2 class="modal-title">Request Pickup</h2>
+            <form id="request-form">
+                <div class="form-group">
+                    <label>Your Name</label>
+                    <input type="text" id="volunteer-name" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="volunteer-phone" placeholder="+91 9876543210" required>
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="volunteer-email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label>Pickup Time</label>
+                    <input type="datetime-local" id="request-pickup-time" required>
+                </div>
+                <div id="listing-details" style="background: var(--bg-light); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                    <!-- Listing details will be inserted here -->
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Submit Request</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script>
+        let allListings = [];
+        let filteredListings = [];
+        let selectedListing = null;
+
+        async function loadListings() {
+            try {
+                const jsonListings = await API.get('data/leftover-food.json');
+                const localListings = JSON.parse(localStorage.getItem('leftover-food') || '[]');
+                allListings = [...jsonListings, ...localListings];
+                filteredListings = allListings.filter(l => l.status === 'available');
+                renderListings();
+            } catch (error) {
+                console.error('Error loading listings:', error);
+            }
+        }
+
+        function renderListings() {
+            const container = document.getElementById('listings-container');
+            const emptyState = document.getElementById('empty-state');
+
+            if (filteredListings.length === 0) {
+                container.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            container.style.display = 'grid';
+            emptyState.style.display = 'none';
+
+            container.innerHTML = filteredListings.map(listing => `
+                <div class="card">
+                    <div class="card-content">
+                        <h3 class="card-title">${listing.restaurantName}</h3>
+                        <div style="margin: 1rem 0;">
+                            <strong>Food Items:</strong>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                                ${listing.foodItems.map(item => 
+                                    `<li>${item.name} (Qty: ${item.quantity})</li>`
+                                ).join('')}
+                            </ul>
+                        </div>
+                        <div class="card-info">
+                            <span>📍 ${listing.location}</span>
+                        </div>
+                        <div class="card-info">
+                            <span>🕐 ${formatDate(listing.pickupTime)}</span>
+                        </div>
+                        <div class="card-info">
+                            <span>📞 ${listing.contact}</span>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <span class="status-badge status-${listing.status}">${listing.status}</span>
+                        </div>
+                        ${listing.status === 'available' ? `
+                            <button class="btn btn-primary" style="width: 100%; margin-top: 1rem;" 
+                                    onclick="openRequestModal(${listing.id})">
+                                Request Pickup
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openRequestModal(listingId) {
+            selectedListing = allListings.find(l => l.id === listingId);
+            if (!selectedListing) return;
+
+            const modal = document.getElementById('request-modal');
+            const detailsContainer = document.getElementById('listing-details');
+
+            detailsContainer.innerHTML = `
+                <h3 style="margin-bottom: 0.5rem;">${selectedListing.restaurantName}</h3>
+                <p style="color: var(--text-light); margin-bottom: 0.5rem;">📍 ${selectedListing.location}</p>
+                <p style="color: var(--text-light); margin-bottom: 0.5rem;">🕐 ${formatDate(selectedListing.pickupTime)}</p>
+                <div style="margin-top: 0.5rem;">
+                    <strong>Food Items:</strong>
+                    <ul style="margin-top: 0.25rem; padding-left: 1.5rem;">
+                        ${selectedListing.foodItems.map(item => 
+                            `<li>${item.name} (Qty: ${item.quantity})</li>`
+                        ).join('')}
+                    </ul>
+                </div>
+            `;
+
+            // Set default pickup time
+            const pickupDate = new Date(selectedListing.pickupTime);
+            document.getElementById('request-pickup-time').value = pickupDate.toISOString().slice(0, 16);
+
+            modal.classList.add('active');
+        }
+
+        function closeRequestModal() {
+            document.getElementById('request-modal').classList.remove('active');
+            document.getElementById('request-form').reset();
+            selectedListing = null;
+        }
+
+        document.getElementById('request-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            if (!selectedListing) return;
+
+            const volunteerName = document.getElementById('volunteer-name').value.trim();
+            const volunteerPhone = document.getElementById('volunteer-phone').value.trim();
+            const volunteerEmail = document.getElementById('volunteer-email').value.trim();
+            const pickupTime = document.getElementById('request-pickup-time').value;
+
+            if (!volunteerName || !volunteerPhone || !volunteerEmail) {
+                Toast.error('Please fill in all fields');
+                return;
+            }
+
+            // Create pickup request
+            const request = {
+                id: Date.now(),
+                leftoverFoodId: selectedListing.id,
+                restaurantName: selectedListing.restaurantName,
+                volunteerName: volunteerName,
+                volunteerPhone: volunteerPhone,
+                volunteerEmail: volunteerEmail,
+                pickupTime: new Date(pickupTime).toISOString(),
+                status: 'pending',
+                createdAt: new Date().toISOString()
+            };
+
+            // Save request to localStorage
+            const requests = JSON.parse(localStorage.getItem('pickup-requests') || '[]');
+            requests.push(request);
+            localStorage.setItem('pickup-requests', JSON.stringify(requests));
+
+            // Update listing status
+            const localListings = JSON.parse(localStorage.getItem('leftover-food') || '[]');
+            const listingIndex = localListings.findIndex(l => l.id === selectedListing.id);
+            if (listingIndex !== -1) {
+                localListings[listingIndex].status = 'requested';
+                localListings[listingIndex].requestedBy = volunteerName;
+                localStorage.setItem('leftover-food', JSON.stringify(localListings));
+            }
+
+            // Update in-memory data
+            selectedListing.status = 'requested';
+            selectedListing.requestedBy = volunteerName;
+            filteredListings = allListings.filter(l => l.status === 'available');
+
+            Toast.success('Pickup request submitted successfully!');
+            closeRequestModal();
+            renderListings();
+        });
+
+        // Filter by status
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const status = this.dataset.status;
+                if (status === 'all') {
+                    filteredListings = allListings;
+                } else {
+                    filteredListings = allListings.filter(l => l.status === status);
+                }
+
+                renderListings();
+            });
+        });
+
+        // Close modal on outside click
+        document.getElementById('request-modal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeRequestModal();
+            }
+        });
+
+        loadListings();
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DIGIDINE - Order Food Online</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">🍽️ DIGIDINE</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="restaurants.html">Restaurants</a></li>
+                <li><a href="leftover-food.html">Leftover Food</a></li>
+                <li>
+                    <a href="cart.html" class="cart-icon">
+                        🛒 Cart
+                        <span class="cart-badge" style="display: none;">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-video-container">
+            <video class="hero-video" id="hero-video-1" autoplay muted playsinline>
+                <source src="vid/219525_small.mp4" type="video/mp4">
+            </video>
+            <video class="hero-video" id="hero-video-2" muted playsinline style="display: none;">
+                <source src="vid/302135_small.mp4" type="video/mp4">
+            </video>
+            <video class="hero-video" id="hero-video-3" muted playsinline style="display: none;">
+                <source src="vid/79900-570532758.mp4" type="video/mp4">
+            </video>
+            <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+            <h1>Welcome to DiGiDiN</h1>
+            <p>Order delicious food from your favorite restaurants</p>
+            <p style="font-size: 1rem; margin-top: 1rem;">Plus: Help reduce food waste by connecting leftover food with those in need</p>
+            <div style="margin-top: 2rem;">
+                <a href="restaurants.html" class="btn btn-primary">Browse Restaurants</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="container">
+        <h2 style="text-align: center; margin: 1rem 0 2rem;">Featured Restaurants</h2>
+        <div id="featured-restaurants" class="cards-grid"></div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script>
+        async function loadFeaturedRestaurants() {
+            try {
+                const restaurants = await API.get('data/restaurants.json');
+                const featured = restaurants.slice(0, 3);
+                const container = document.getElementById('featured-restaurants');
+                
+                container.innerHTML = featured.map(restaurant => `
+                    <div class="card" onclick="window.location.href='restaurant-detail.html?id=${restaurant.id}'">
+                        <img src="${restaurant.image}" alt="${restaurant.name}" class="card-image">
+                        <div class="card-content">
+                            <h3 class="card-title">${restaurant.name}</h3>
+                            <p class="card-subtitle">${restaurant.cuisine}</p>
+                            <div class="card-info">
+                                <span class="rating">⭐ ${restaurant.rating}</span>
+                                <span>${restaurant.deliveryTime}</span>
+                            </div>
+                            <div class="card-footer">
+                                <span>Min. ₹${restaurant.minOrder}</span>
+                                <span class="price">Delivery: ₹${restaurant.deliveryFee}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading restaurants:', error);
+            }
+        }
+
+        loadFeaturedRestaurants();
+
+        // Video background rotation
+        const videos = [
+            document.getElementById('hero-video-1'),
+            document.getElementById('hero-video-2'),
+            document.getElementById('hero-video-3')
+        ];
+        let currentVideoIndex = 0;
+
+        function setupVideoRotation() {
+            videos.forEach((video, index) => {
+                // Ensure videos are set to loop individually (though we'll handle looping manually)
+                video.loop = false;
+                
+                video.addEventListener('ended', function() {
+                    // Hide current video
+                    this.style.display = 'none';
+                    this.style.opacity = '0';
+                    
+                    // Move to next video
+                    currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+                    const nextVideo = videos[currentVideoIndex];
+                    
+                    // Show and play next video
+                    nextVideo.style.display = 'block';
+                    nextVideo.style.opacity = '1';
+                    nextVideo.currentTime = 0;
+                    nextVideo.play().catch(e => console.log('Video play error:', e));
+                });
+
+                // Handle video errors
+                video.addEventListener('error', function() {
+                    console.error('Error loading video:', this.src);
+                    // Skip to next video if current one fails
+                    if (this === videos[currentVideoIndex]) {
+                        currentVideoIndex = (currentVideoIndex + 1) % videos.length;
+                        videos[currentVideoIndex].play().catch(e => console.log('Video play error:', e));
+                    }
+                });
+
+                // Load videos
+                video.load();
+            });
+
+            // Start playing the first video
+            videos[0].play().catch(e => console.log('Video play error:', e));
+        }
+
+        // Initialize video rotation when page loads
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', setupVideoRotation);
+        } else {
+            setupVideoRotation();
+        }
+    </script>
+</body>
+</html>
+

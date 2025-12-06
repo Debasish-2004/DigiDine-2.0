@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Details - DIGIDINE</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">🍽️ DIGIDINE</a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="restaurants.html">Restaurants</a></li>
+                <li><a href="leftover-food.html">Leftover Food</a></li>
+
+                <li>
+                    <a href="cart.html" class="cart-icon">
+                        🛒 Cart
+                        <span class="cart-badge" style="display: none;">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div id="restaurant-header" class="restaurant-header">
+            <h1 id="restaurant-name">Loading...</h1>
+            <p id="restaurant-description"></p>
+            <div class="restaurant-meta">
+                <div class="meta-item">
+                    <span>⭐</span>
+                    <span id="restaurant-rating"></span>
+                </div>
+                <div class="meta-item">
+                    <span>⏱️</span>
+                    <span id="restaurant-delivery-time"></span>
+                </div>
+                <div class="meta-item">
+                    <span>💰</span>
+                    <span>Min. Order: ₹<span id="restaurant-min-order"></span></span>
+                </div>
+                <div class="meta-item">
+                    <span>🚚</span>
+                    <span>Delivery: ₹<span id="restaurant-delivery-fee"></span></span>
+                </div>
+            </div>
+        </div>
+
+        <div id="menu-container"></div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const restaurantId = urlParams.get('id');
+
+        async function loadRestaurantDetails() {
+            try {
+                const [restaurants, menus] = await Promise.all([
+                    API.get('data/restaurants.json'),
+                    API.get('data/menus.json')
+                ]);
+
+                const restaurant = restaurants.find(r => r.id === parseInt(restaurantId));
+                const menu = menus[restaurantId] || [];
+
+                if (!restaurant) {
+                    Toast.error('Restaurant not found');
+                    return;
+                }
+
+                // Update header
+                document.getElementById('restaurant-name').textContent = restaurant.name;
+                document.getElementById('restaurant-description').textContent = restaurant.description;
+                document.getElementById('restaurant-rating').textContent = restaurant.rating;
+                document.getElementById('restaurant-delivery-time').textContent = restaurant.deliveryTime;
+                document.getElementById('restaurant-min-order').textContent = restaurant.minOrder;
+                document.getElementById('restaurant-delivery-fee').textContent = restaurant.deliveryFee;
+
+                // Render menu
+                renderMenu(menu);
+            } catch (error) {
+                console.error('Error loading restaurant:', error);
+                Toast.error('Failed to load restaurant details');
+            }
+        }
+
+        function renderMenu(menu) {
+            const container = document.getElementById('menu-container');
+            
+            if (menu.length === 0) {
+                container.innerHTML = '<div class="empty-state"><h3>No menu items available</h3></div>';
+                return;
+            }
+
+            // Group by category
+            const categories = {};
+            menu.forEach(item => {
+                if (!categories[item.category]) {
+                    categories[item.category] = [];
+                }
+                categories[item.category].push(item);
+            });
+
+            container.innerHTML = Object.keys(categories).map(category => `
+                <div class="menu-section">
+                    <div class="menu-category">
+                        <h2>${category}</h2>
+                        ${categories[category].map(item => `
+                            <div class="menu-item">
+                                <img src="${item.image}" alt="${item.name}" class="menu-item-image">
+                                <div class="menu-item-content">
+                                    <div class="menu-item-name">
+                                        ${item.veg ? '<span class="veg-indicator"></span>' : '<span class="non-veg-indicator"></span>'}
+                                        ${item.name}
+                                    </div>
+                                    <div class="menu-item-description">${item.description}</div>
+                                    <div class="menu-item-footer">
+                                        <span class="menu-item-price">${formatCurrency(item.price)}</span>
+                                        <button class="btn btn-primary btn-sm" onclick="addToCart(${item.id}, '${item.name}', ${item.price}, '${item.image}')">
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function addToCart(id, name, price, image) {
+            const item = {
+                id: id,
+                name: name,
+                price: price,
+                image: image,
+                restaurantId: parseInt(restaurantId)
+            };
+            
+            Cart.add(item);
+            Toast.success(`${name} added to cart!`);
+        }
+
+        loadRestaurantDetails();
+    </script>
+</body>
+</html>
+

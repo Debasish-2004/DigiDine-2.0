@@ -1,0 +1,70 @@
+[
+  {
+    "id": 1,
+    "restaurantId": 1,
+    "restaurantName": "Spice Garden",
+    "foodItems": [
+      {
+        "name": "Butter Chicken",
+        "quantity": 5,
+        "description": "Leftover from dinner service"
+      },
+      {
+        "name": "Dal Makhani",
+        "quantity": 3,
+        "description": "Freshly prepared, unsold"
+      }
+    ],
+    "pickupTime": "2024-01-15T22:00:00",
+    "location": "123 Main Street, Downtown",
+    "status": "available",
+    "createdAt": "2024-01-15T21:30:00",
+    "contact": "+91 9876543210"
+  },
+  {
+    "id": 2,
+    "restaurantId": 2,
+    "restaurantName": "Pizza Paradise",
+    "foodItems": [
+      {
+        "name": "Margherita Pizza",
+        "quantity": 8,
+        "description": "Unsold pizzas from closing"
+      },
+      {
+        "name": "Garlic Bread",
+        "quantity": 10,
+        "description": "Freshly baked, ready to serve"
+      }
+    ],
+    "pickupTime": "2024-01-15T22:30:00",
+    "location": "456 Food Court, Mall Road",
+    "status": "available",
+    "createdAt": "2024-01-15T22:00:00",
+    "contact": "+91 9876543211"
+  },
+  {
+    "id": 3,
+    "restaurantId": 4,
+    "restaurantName": "Burger Junction",
+    "foodItems": [
+      {
+        "name": "Classic Burger",
+        "quantity": 12,
+        "description": "Prepared but unsold"
+      },
+      {
+        "name": "French Fries",
+        "quantity": 15,
+        "description": "Freshly fried, still warm"
+      }
+    ],
+    "pickupTime": "2024-01-15T23:00:00",
+    "location": "789 Fast Food Lane",
+    "status": "requested",
+    "createdAt": "2024-01-15T22:15:00",
+    "contact": "+91 9876543212",
+    "requestedBy": "Volunteer John"
+  }
+]
+
