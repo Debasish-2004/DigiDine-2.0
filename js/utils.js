@@ -181,6 +181,126 @@ function formatDate(dateString) {
   });
 }
 
+// Order management
+const Orders = {
+  get: function() {
+    return JSON.parse(localStorage.getItem('orders') || '[]');
+  },
+  
+  add: function(order) {
+    const orders = this.get();
+    const newOrder = {
+      ...order,
+      id: Date.now(),
+      status: 'cooking',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    orders.unshift(newOrder); // Add to beginning
+    localStorage.setItem('orders', JSON.stringify(orders));
+    return newOrder;
+  },
+  
+  updateStatus: function(orderId, status) {
+    const orders = this.get();
+    const order = orders.find(o => o.id === orderId);
+    if (order) {
+      order.status = status;
+      order.updatedAt = new Date().toISOString();
+      localStorage.setItem('orders', JSON.stringify(orders));
+    }
+    return order;
+  },
+  
+  getActiveOrders: function() {
+    return this.get().filter(order => order.status !== 'delivered');
+  },
+  
+  getAllOrders: function() {
+    return this.get();
+  }
+};
+
+// Saved Addresses management
+const SavedAddresses = {
+  get: function() {
+    return JSON.parse(localStorage.getItem('saved-addresses') || '[]');
+  },
+  
+  add: function(address) {
+    const addresses = this.get();
+    const newAddress = {
+      ...address,
+      id: Date.now(),
+      createdAt: new Date().toISOString()
+    };
+    addresses.push(newAddress);
+    localStorage.setItem('saved-addresses', JSON.stringify(addresses));
+    return newAddress;
+  },
+  
+  remove: function(addressId) {
+    const addresses = this.get();
+    const filtered = addresses.filter(a => a.id !== addressId);
+    localStorage.setItem('saved-addresses', JSON.stringify(filtered));
+    return filtered;
+  }
+};
+
+// Saved Restaurants management
+const SavedRestaurants = {
+  get: function() {
+    return JSON.parse(localStorage.getItem('saved-restaurants') || '[]');
+  },
+  
+  add: function(restaurantId) {
+    const saved = this.get();
+    if (!saved.includes(restaurantId)) {
+      saved.push(restaurantId);
+      localStorage.setItem('saved-restaurants', JSON.stringify(saved));
+    }
+    return saved;
+  },
+  
+  remove: function(restaurantId) {
+    const saved = this.get();
+    const filtered = saved.filter(id => id !== restaurantId);
+    localStorage.setItem('saved-restaurants', JSON.stringify(filtered));
+    return filtered;
+  },
+  
+  isSaved: function(restaurantId) {
+    return this.get().includes(restaurantId);
+  }
+};
+
+// Saved Dishes management
+const SavedDishes = {
+  get: function() {
+    return JSON.parse(localStorage.getItem('saved-dishes') || '[]');
+  },
+  
+  add: function(dishId) {
+    const saved = this.get();
+    if (!saved.includes(dishId)) {
+      saved.push(dishId);
+      localStorage.setItem('saved-dishes', JSON.stringify(saved));
+    }
+    return saved;
+  },
+  
+  remove: function(dishId) {
+    const saved = this.get();
+    const filtered = saved.filter(id => id !== dishId);
+    localStorage.setItem('saved-dishes', JSON.stringify(filtered));
+    return filtered;
+  },
+  
+  isSaved: function(dishId) {
+    return this.get().includes(dishId);
+  }
+};
+
 // Initialize cart badge on page load
 document.addEventListener('DOMContentLoaded', function() {
   Cart.updateBadge();
